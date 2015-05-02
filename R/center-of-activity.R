@@ -13,7 +13,7 @@
 #'   must have been defined in the station_names argument
 #' @param det_times vector containing the times of the detections. If the vector
 #'   is not an Date-Time (POSIXct) object, it would be coerced to POSIXct using 
-#'   parse_datetime()
+#'   \code{\link[readr]{parse_datetime}}
 #' @param interval a vector of cut points or number giving the number of 
 #'   intervals which the detections are to be grouped OR an interval 
 #'   specification. Intervals can be one of "sec", "min", "hour", "day", 
@@ -48,39 +48,52 @@
 #' function. Following [7], both arithmetic and harmonic mean estimators for
 #' each method were evaluated.
 #' 
+#' @references
+#' Farmer, N. a, Ault, J. S., Smith, S. G., & Franklin, E. C. (2013). Methods for assessment of short-term coral reef fish movements within an acoustic array. Movement Ecology, 1(1), 7. \url{http://doi.org/10.1186/2051-3933-1-7}
+#' 
+#' Simpfendorfer, C., & Heupel, M. (2002). Estimation of short-term centers of activity from an array of omnidirectional hydrophones and its use in studying animal movements. Canadian Journal of Fisheries and Aquatic Sciences, 32, 23–32. \url{http://doi.org/10.1139/F01-191}
+#' 
 #' @examples
 #' plot_crayons()
 #' 
 #' @export
-
-# # center-of-activity
-# load("./data/processed-data/detections_corr.RData")
 # 
+# # center-of-activity
+# load("~/github/VPS-SSM/data/processed-data/detections_corr.RData")
+# library(dplyr)
 # stations <- detections_corr %>%
 #   select(name, latitude, longitude) %>%
 #   distinct()
 # 
-# rec <- stations$name
-# rec_pos <- stations %>% select(latitude, longitude)
-# 
-# det <- detections_corr$name
+# station_names <- stations$name
+# station_positions_1 <- stations %>% select(latitude, longitude)
+# station_positions_2 <- as.matrix(station_positions_1)
+# station_positions_3 <- station_positions_2
+# colnames(station_positions_3) <- NULL
+# det_stations <- detections_corr$name
 # det_times <- detections_corr$date_time
 # 
 # interval = "30 min"
 
 coa <- function (station_names, 
-                                station_positions,
-                                det_stations,
-                                det_times,
-                                interval = "5 min", 
-                                method = c("observation-weighted", "model-weighted", "average"),
-                                mean_type = c("arithmetic", "harmonic"),
-                                model = NULL) {
+                 station_positions,
+                 det_stations,
+                 det_times,
+                 interval = "5 min", 
+                 method = c("observation-weighted", "model-weighted", "average"),
+                 mean_type = c("arithmetic", "harmonic"),
+                 model = NULL) {
    
-  # Check that all detections have a receiver position ----------
-  # Check that times are correct ----------
-  if(any(class(det_times)) != "POSIXct") det_times <- parse_datetime(det_times)
-  # Check that there is only one location per receiver ----------
+  # Check that all detections have a receiver position
+  if(!all(station_names %in% det_stations)) 
+    stop("Not all stations in 'det_stations' are in 'station_names'")
+  # Check that times are correct
+  if(any(class(det_times)) != "POSIXct") 
+    det_times <- parse_datetime(det_times)
+  
+  # Standarise station positions
+  station_positions <- std_positions(station_positions) 
+  # Check that there is only one location per receiver 
   
   
   class(station_pos) <- "data.frame"
@@ -96,4 +109,45 @@ coa <- function (station_names,
     group_by(breaks) %>%
     summarise(lat = mean(lat), 
               lon = mean(lon))
+}
+
+std_positions <- function (station_positions) {
+  # Transform any of the possible station positions into a data frame with lat and lon 
+  
+  # If it's a tbl_df convert to a normal data.frame
+  if(any(class(station_positions) == "data.frame")) 
+    class(station_positions) <- "data.frame"
+  
+  # If it's a SpacialPoints object extract the coordinates
+  if(any(class(station_positions) == "SpatialPoints"))
+    station_positions <- coordinates(station_positions)
+  
+  # Check that it has at least two columns
+  if(ncol(station_positions < 2)) stop("'station_positions' has less than two columns")
+  
+  # Check that there are columns called latitude/longitude
+  if(c("lat", "lon") %in% colnames(station_positions)){
+    out_pos <- data_frame(lon = station_positions[,"lon"],
+                          lat = station_positions[, "lat"])
+  } else if(c("latitude", "longitude") %in% colnames(station_positions)){
+    out_pos <- data_frame(lon = station_positions[,"longitude"],
+                          lat = station_positions[, "latitude"])
+  } else {
+    if(ncol(station_positions) > 2) 
+      warning("'station_positions' has more than two columns, only the first two are used")
+    out_pos <- data_frame(lon = station_positions[, 1],
+                          lat = station_positions[, 2])
+  }
+  
+  # Coerce to numeric
+  if(!(is.numeric(out_pos$lat) & is.numeric(out_pos$lon))) {
+    warning("Coordinates are not numbers, coercing to 'numeric'")
+    out_pos %<>% mutate(lat = as.numeric(lat), lon = as.numeric(lon))
+  }
+  
+  # Stop if there is NA's
+  if(any(is.na(out_pos$lat)) | any(is.na(out_pos$lon)))
+    stop("There are missing values in 'station_positions'")
+  
+  return(out_pos)
 }
