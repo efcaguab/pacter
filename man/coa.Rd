@@ -5,7 +5,7 @@
 \title{Calculate center of activity}
 \usage{
 coa(station_names, station_positions, det_stations, det_times,
-  interval = "5 min", method = c("observation-weighted", "model-weighted",
+  breaks = "5 min", method = c("observation-weighted", "model-weighted",
   "average"), mean_type = c("arithmetic", "harmonic"), model = NULL)
 }
 \arguments{
@@ -24,7 +24,7 @@ must have been defined in the station_names argument}
 is not an Date-Time (POSIXct) object, it would be coerced to POSIXct using
 \code{\link[readr]{parse_datetime}}}
 
-\item{interval}{a vector of cut points or number giving the number of
+\item{breaks}{a vector of cut points or number giving the number of
 intervals which the detections are to be grouped OR an interval
 specification. Intervals can be one of "sec", "min", "hour", "day",
 "DSTday", "week", "month", "quarter" or "year", optionally preceded by an
