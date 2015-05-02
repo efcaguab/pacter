@@ -68,26 +68,38 @@ coa <- function (station_names,
                  mean_type = c("arithmetic", "harmonic"),
                  model = NULL) {
   
-  #
-  positions <- get_positions()
+  # Get positions
+  positions <- get_positions(station_names, station_positions)
+  detections <- get_detections(det_stations, det_times)
   
-  # Check that all detections have a receiver position
-  if(!all(station_names %in% det_stations)) 
-    stop("Not all stations in 'det_stations' are in 'station_names'")
-  
-  # Check that times are correct
-  if(any(class(det_times)) != "POSIXct") 
-    det_times <- parse_datetime(det_times)
-  
-  detections <- data_frame(rec = det, time = det_times)
-  
-  detections %<>% 
-    inner_join(positions) %>%
-    mutate(breaks = cut (time, interval))
-  
-  detections %<>% 
-    group_by(breaks) %>%
-    summarise(lat = mean(lat), 
-              lon = mean(lon))
-}
+  # Check that every receiver in detections has a position
+  if (!all(detections$rec %in% positions$rec)) 
+    stop("Not all station-names/receiver-ids in 'det_stations' are present in 'station_names'")
 
+  detections %<>% 
+    mutate(breaks = cut (time, breaks)) %>% # Cut by the given breaks
+    group_by(breaks, rec)
+  
+  if (method == "average"){
+    detections %<>% summarise(weight = 1) %>% group_by()
+  } else if (method == "observation-weighted") {
+    detections %<>% summarise(weight = n()) %>% group_by()
+  } else if (method == "model-weighted") {
+    detections %<>% 
+      summarise(det = n()) %>%
+      group_by() %>%
+      mutate(det_prob = det/max(det),
+             distance = dist_dp(det_prob, model)) %>%
+      group_by(breaks) %>%
+      mutate(max_dist = max(distance)) %>%
+      group_by() %>%
+      mutate(weight = max_dist / distance)
+  }
+  
+  detections %<>%
+    inner_join(positions) %>%
+    group_by(breaks) %>%
+    summarise(lon = vers_mean(lon, weight, mean_type),
+              lat = vers_mean(lat, weight, mean_type))
+    
+}
