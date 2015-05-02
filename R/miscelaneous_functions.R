@@ -1,4 +1,4 @@
-get_positions <- function (station_positions, station_names) {
+get_positions <- function (station_names, station_positions) {
   # Get positions in a standard way given possible input formats, and check that
   # everything is correct
   
