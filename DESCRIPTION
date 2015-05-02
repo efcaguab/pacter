@@ -7,3 +7,4 @@ Author: Fernando Cagua
 Maintainer: Fernando Cagua <fernando@cagua.co>
 Description: More about what it does (maybe more than one line)
 License: GNU 2.0
+Suggests: testthat
