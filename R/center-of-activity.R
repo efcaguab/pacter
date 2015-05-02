@@ -14,7 +14,7 @@
 #' @param det_times vector containing the times of the detections. If the vector
 #'   is not an Date-Time (POSIXct) object, it would be coerced to POSIXct using 
 #'   \code{\link[readr]{parse_datetime}}
-#' @param interval a vector of cut points or number giving the number of 
+#' @param breaks a vector of cut points or number giving the number of 
 #'   intervals which the detections are to be grouped OR an interval 
 #'   specification. Intervals can be one of "sec", "min", "hour", "day", 
 #'   "DSTday", "week", "month", "quarter" or "year", optionally preceded by an 
@@ -58,28 +58,12 @@
 #' 
 #' @export
 # 
-# center-of-activity
-load("~/github/VPS-SSM/data/processed-data/detections_corr.RData")
-library(dplyr)
-stations <- detections_corr %>%
-  select(name, latitude, longitude) %>%
-  distinct()
-
-station_names <- stations$name
-station_positions_1 <- stations %>% select(latitude, longitude)
-station_positions_2 <- as.matrix(station_positions_1)
-station_positions_3 <- station_positions_2
-colnames(station_positions_3) <- NULL
-det_stations <- detections_corr$name
-det_times <- detections_corr$date_time
-
-interval = "30 min"
 
 coa <- function (station_names, 
                  station_positions,
                  det_stations,
                  det_times,
-                 interval = "5 min", 
+                 breaks = "5 min", 
                  method = c("observation-weighted", "model-weighted", "average"),
                  mean_type = c("arithmetic", "harmonic"),
                  model = NULL) {
