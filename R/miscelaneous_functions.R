@@ -128,4 +128,17 @@ vers_mean <- function(x, w, mean_type = "arithmetic") {
   return(y)
 }
 
+dist_dp <- function(det_prob, model) {
+  # Calculates the distance that correspond to a specific detection probability
+  # in a logistic function
+  
+  if (is.null(model)) stop("The chosen method is 'model weighted' but 'model' was not provided")
+  
+  model <- std_model(model)  # Standarize model input
+  co <- coefficients(model)  # Get the coeficients
+  names(co) <- NULL
+  
+  dist <- (logit(det_prob) - co[1]) / co[2]  # Invert the formula
+  dist[dist < 1] <- 1  # Only return positive distances...
+  return(dist)
 }
