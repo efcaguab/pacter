@@ -114,3 +114,18 @@ std_model <- function(model) {
   
   return(model)
 }
+
+# Mathematic -------------------
+
+vers_mean <- function(x, w, mean_type = "arithmetic") {
+  # Calculates weighted arithmetic or harmonic means
+
+  if(mean_type == "harmonic") {
+    y <- 1 / weighted.mean(1 / x, w)
+  } else {
+    y <- weighted.mean (x, w)
+  } 
+  return(y)
+}
+
+}
