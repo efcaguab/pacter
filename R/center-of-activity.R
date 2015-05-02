@@ -58,22 +58,22 @@
 #' 
 #' @export
 # 
-# # center-of-activity
-# load("~/github/VPS-SSM/data/processed-data/detections_corr.RData")
-# library(dplyr)
-# stations <- detections_corr %>%
-#   select(name, latitude, longitude) %>%
-#   distinct()
-# 
-# station_names <- stations$name
-# station_positions_1 <- stations %>% select(latitude, longitude)
-# station_positions_2 <- as.matrix(station_positions_1)
-# station_positions_3 <- station_positions_2
-# colnames(station_positions_3) <- NULL
-# det_stations <- detections_corr$name
-# det_times <- detections_corr$date_time
-# 
-# interval = "30 min"
+# center-of-activity
+load("~/github/VPS-SSM/data/processed-data/detections_corr.RData")
+library(dplyr)
+stations <- detections_corr %>%
+  select(name, latitude, longitude) %>%
+  distinct()
+
+station_names <- stations$name
+station_positions_1 <- stations %>% select(latitude, longitude)
+station_positions_2 <- as.matrix(station_positions_1)
+station_positions_3 <- station_positions_2
+colnames(station_positions_3) <- NULL
+det_stations <- detections_corr$name
+det_times <- detections_corr$date_time
+
+interval = "30 min"
 
 coa <- function (station_names, 
                  station_positions,
@@ -83,23 +83,19 @@ coa <- function (station_names,
                  method = c("observation-weighted", "model-weighted", "average"),
                  mean_type = c("arithmetic", "harmonic"),
                  model = NULL) {
-   
+  
+  #
+  positions <- get_positions()
+  
   # Check that all detections have a receiver position
   if(!all(station_names %in% det_stations)) 
     stop("Not all stations in 'det_stations' are in 'station_names'")
+  
   # Check that times are correct
   if(any(class(det_times)) != "POSIXct") 
     det_times <- parse_datetime(det_times)
   
-  # Standarise station positions
-  station_positions <- std_positions(station_positions) 
-  # Check that there is only one location per receiver 
-  
-  
-  class(station_pos) <- "data.frame"
-  
   detections <- data_frame(rec = det, time = det_times)
-  positions <- data_frame(rec = rec, lat = rec_pos[, 1], lon = rec_pos[, 2])
   
   detections %<>% 
     inner_join(positions) %>%
@@ -111,43 +107,3 @@ coa <- function (station_names,
               lon = mean(lon))
 }
 
-std_positions <- function (station_positions) {
-  # Transform any of the possible station positions into a data frame with lat and lon 
-  
-  # If it's a tbl_df convert to a normal data.frame
-  if(any(class(station_positions) == "data.frame")) 
-    class(station_positions) <- "data.frame"
-  
-  # If it's a SpacialPoints object extract the coordinates
-  if(any(class(station_positions) == "SpatialPoints"))
-    station_positions <- coordinates(station_positions)
-  
-  # Check that it has at least two columns
-  if(ncol(station_positions < 2)) stop("'station_positions' has less than two columns")
-  
-  # Check that there are columns called latitude/longitude
-  if(c("lat", "lon") %in% colnames(station_positions)){
-    out_pos <- data_frame(lon = station_positions[,"lon"],
-                          lat = station_positions[, "lat"])
-  } else if(c("latitude", "longitude") %in% colnames(station_positions)){
-    out_pos <- data_frame(lon = station_positions[,"longitude"],
-                          lat = station_positions[, "latitude"])
-  } else {
-    if(ncol(station_positions) > 2) 
-      warning("'station_positions' has more than two columns, only the first two are used")
-    out_pos <- data_frame(lon = station_positions[, 1],
-                          lat = station_positions[, 2])
-  }
-  
-  # Coerce to numeric
-  if(!(is.numeric(out_pos$lat) & is.numeric(out_pos$lon))) {
-    warning("Coordinates are not numbers, coercing to 'numeric'")
-    out_pos %<>% mutate(lat = as.numeric(lat), lon = as.numeric(lon))
-  }
-  
-  # Stop if there is NA's
-  if(any(is.na(out_pos$lat)) | any(is.na(out_pos$lon)))
-    stop("There are missing values in 'station_positions'")
-  
-  return(out_pos)
-}
