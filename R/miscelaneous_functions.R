@@ -1,3 +1,23 @@
+get_positions <- function (station_positions, station_names) {
+  # Get positions in a standard way given possible input formats, and check that
+  # everything is correct
+  
+  # Standarise station positions
+  station_positions <- std_positions(station_positions) 
+  # Check that there is only one location per receiver 
+  if(length(station_names) != nrow(station_positions))
+    stop ("Number of stations in 'station_names' differ to the number of coordinates in 'station_positions'")
+  
+  positions <- data_frame (rec = station_names) %>%
+    bind_cols(station_positions)
+  
+  # If there are NA's
+  if(positions %>% 
+       lapply(function(x) any(is.na(x))) %>%
+       unlist() %>% any()) stop("One or more of the coordinates or station names is missing or is not a valid value")
+}
+
+
 std_positions <- function (station_positions) {
   # Transform any of the possible station positions into a data frame with lat and lon 
   
