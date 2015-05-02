@@ -21,7 +21,8 @@ get_positions <- function (station_names, station_positions) {
 
 
 std_positions <- function (station_positions) {
-  # Transform any of the possible station positions into a data frame with lat and lon 
+  # Transform any of the possible station positions into a data frame with lat
+  # and lon
   
   # If it's a tbl_df convert to a normal data.frame
   if(any(class(station_positions) == "data.frame")) 
@@ -57,3 +58,23 @@ std_positions <- function (station_positions) {
   return(out_pos)
 }
 
+
+get_detections <- function (det_stations, det_times) {
+  # Get detections in a standard way. Check that dates and formats are correct
+  
+  # Check that times are correct
+  if(!any(class(det_times) == "POSIXct")) {
+    warning("'det_times' is not a POSIXct object. Coervertion will at UTC timezone will be attempted")
+    det_times <- parse_datetime(det_times)
+    if(any(is.na(det_times))) warning("Problems parsing date-times detected")
+  }
+  
+  detections <- data_frame(rec = det_stations, time = det_times)
+  
+  # Check if there is NA's
+  if(detections %>% lapply(function(x) any(is.na(x))) %>% unlist() %>% any())
+    warning("Missing or invalid values detected in 'det_stations' or 'det_times'. NA's will be removed" )
+  
+  detections %<>% 
+    filter(!is.na(rec), !is.na(time))
+}
