@@ -22,7 +22,7 @@ must have been defined in the station_names argument}
 
 \item{det_times}{vector containing the times of the detections. If the vector
 is not an Date-Time (POSIXct) object, it would be coerced to POSIXct using
-parse_datetime()}
+\code{\link[readr]{parse_datetime}}}
 
 \item{interval}{a vector of cut points or number giving the number of
 intervals which the detections are to be grouped OR an interval
@@ -67,5 +67,10 @@ each method were evaluated.
 }
 \examples{
 plot_crayons()
+}
+\references{
+Farmer, N. a, Ault, J. S., Smith, S. G., & Franklin, E. C. (2013). Methods for assessment of short-term coral reef fish movements within an acoustic array. Movement Ecology, 1(1), 7. \url{http://doi.org/10.1186/2051-3933-1-7}
+
+Simpfendorfer, C., & Heupel, M. (2002). Estimation of short-term centers of activity from an array of omnidirectional hydrophones and its use in studying animal movements. Canadian Journal of Fisheries and Aquatic Sciences, 32, 23–32. \url{http://doi.org/10.1139/F01-191}
 }
 
