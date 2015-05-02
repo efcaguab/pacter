@@ -15,6 +15,8 @@ get_positions <- function (station_names, station_positions) {
   if(positions %>% 
        lapply(function(x) any(is.na(x))) %>%
        unlist() %>% any()) stop("One or more of the coordinates or station names is missing or is not a valid value")
+  
+  return(positions)
 }
 
 
@@ -51,5 +53,7 @@ std_positions <- function (station_positions) {
     warning("Coordinates are not numbers, coercing to 'numeric'")
     out_pos %<>% mutate(lat = as.numeric(lat), lon = as.numeric(lon))
   }
+  
+  return(out_pos)
 }
 
