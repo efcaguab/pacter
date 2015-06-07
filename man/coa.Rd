@@ -2,33 +2,23 @@
 % Please edit documentation in R/center-of-activity.R
 \name{coa}
 \alias{coa}
+\alias{coa_d}
 \title{Calculate center of activity}
 \usage{
-coa(station_names, station_positions, det_stations, det_times,
-  breaks = "5 min", method = c("observation-weighted", "model-weighted",
-  "average"), mean_type = c("arithmetic", "harmonic"), model = NULL)
+coa(detections, acoustic_array, breaks = "5 min",
+  method = c("observation-weighted", "model-weighted", "average"),
+  mean_type = c("arithmetic", "harmonic"), model = NULL)
+
+coa_d(det_stations, det_times, det_lon, det_lat, ...)
 }
 \arguments{
-\item{station_names}{vector containing the station names (or receiver ids)
-per array}
+\item{detections}{an object of the class 'detections' created with the function \code{\link{detections}}}
 
-\item{station_positions}{numeric matrix, data.frame or SpatialPoints object
-with the coordinates (Longitude/Latitude) of the stations. Each row is a
-station and there must be only one coordinate per station}
-
-\item{det_stations}{vector with the names of the receiver id/stations name
-where the tag was detected. All receiver ids/station names in this vector
-must have been defined in the station_names argument}
-
-\item{det_times}{vector containing the times of the detections. If the vector
-is not an Date-Time (POSIXct) object, it would be coerced to POSIXct using
-\code{\link[readr]{parse_datetime}}}
-
-\item{breaks}{a vector of cut points or number giving the number of
-intervals which the detections are to be grouped OR an interval
-specification. Intervals can be one of "sec", "min", "hour", "day",
-"DSTday", "week", "month", "quarter" or "year", optionally preceded by an
-integer and a space, or followed by "s"}
+\item{breaks}{a vector of cut points or number giving the number of intervals
+which the detections are to be grouped OR an interval specification.
+Intervals can be one of "sec", "min", "hour", "day", "DSTday", "week",
+"month", "quarter" or "year", optionally preceded by an integer and a
+space, or followed by "s"}
 
 \item{method}{"observation-weighted", "model-weighted" or average. If
 "model-weighted" is selected, a logistic function must be specified in the
@@ -38,39 +28,62 @@ model argument. See details section for more information}
 position}
 
 \item{model}{logistic relationship of the detection probability as a function
-  of distance from a receiver. Must be specified as a named list with the
-  fields P0 (detection probability at a distance 0), D50 (distance
-  corresponding to a detection probability of 50\%), and D95 (distance
-  corresponding to a detection probability of 5\%)}
+of distance from a receiver. Must be specified as a named list with the
+fields P0 (detection probability at a distance 0), D50 (distance
+corresponding to a detection probability of 50\%), and D95 (distance
+corresponding to a detection probability of 5\%)}
+
+\item{det_times}{vector containing the times of the detections. If the vector
+is not an Date-Time (POSIXct) object, it would be coerced to POSIXct using
+\code{\link[readr]{parse_datetime}}}
+
+\item{det_lon,det_lat}{numeric vectors containing the longitude of each
+detection specified in 'det_stations' and 'det_times'}
+
+\item{...}{other arguments passed to \code{coa}}
 }
 \value{
-None
+A Data frame
 }
 \description{
-Calculates the center of activity positions
+Calculates the center of activity in an observation network.
 }
 \details{
-Three methods were evaluated for estimating a tag’s position at time
-t when detected by two or more receivers during a time interval (deltat). The
-first method (termed ‘Average’) was to compute the mean position (latitude,
-longitude) of the detecting receivers. The second was [7] method of using the
-mean of receiver locations weighted by the number of detections
-(‘Observation-Weighted’, Table 6). The third modified the
-‘Observation-Weighted’ method to incorporate regression model estimates of
-tag distance from a receiver (‘Model-Weighted’, Table 6). The weighting term
-was computed as the ratio of estimated distance between the tag and detecting
-receiver i (d i ) relative to the farthest estimated distance of the tag from
-any of the detecting receivers (d max ). The estimated distance (d i ) is
-determined by inputting the observed detection rate into the logistic
-function. Following [7], both arithmetic and harmonic mean estimators for
-each method were evaluated.
+Three methods for center of activity are providedwere evaluated for estimating a tag’s position at time
+  t when detected by two or more receivers during a time interval (deltat).
+  The first method (termed ‘Average’) was to compute the mean position
+  (latitude, longitude) of the detecting receivers. The second was [7] method
+  of using the mean of receiver locations weighted by the number of
+  detections (‘Observation-Weighted’, Table 6). The third modified the
+  ‘Observation-Weighted’ method to incorporate regression model estimates of
+  tag distance from a receiver (‘Model-Weighted’, Table 6). The weighting
+  term was computed as the ratio of estimated distance between the tag and
+  detecting receiver i (d i ) relative to the farthest estimated distance of
+  the tag from any of the detecting receivers (d max ). The estimated
+  distance (d i ) is determined by inputting the observed detection rate into
+  the logistic function. Following [7], both arithmetic and harmonic mean
+  estimators for each method were evaluated.
+
+  All receiver ids/station names in this vector
+  must have been defined in the station_names argument
 }
+\section{Functions}{
+\itemize{
+\item \code{coa_d}: A wrapper for \code{coa()} in which there is one longitude/latitude
+pair for each detection
+}}
 \examples{
 plot_crayons()
 }
 \references{
-Farmer, N. a, Ault, J. S., Smith, S. G., & Franklin, E. C. (2013). Methods for assessment of short-term coral reef fish movements within an acoustic array. Movement Ecology, 1(1), 7. \url{http://doi.org/10.1186/2051-3933-1-7}
+Farmer, N. a, Ault, J. S., Smith, S. G., & Franklin, E. C.
+  (2013). Methods for assessment of short-term coral reef fish movements
+  within an acoustic array. Movement Ecology, 1(1), 7.
+  \url{http://doi.org/10.1186/2051-3933-1-7}
 
-Simpfendorfer, C., & Heupel, M. (2002). Estimation of short-term centers of activity from an array of omnidirectional hydrophones and its use in studying animal movements. Canadian Journal of Fisheries and Aquatic Sciences, 32, 23–32. \url{http://doi.org/10.1139/F01-191}
+  Simpfendorfer, C., & Heupel, M. (2002). Estimation of short-term centers of
+  activity from an array of omnidirectional hydrophones and its use in
+  studying animal movements. Canadian Journal of Fisheries and Aquatic
+  Sciences, 32, 23–32. \url{http://doi.org/10.1139/F01-191}
 }
 

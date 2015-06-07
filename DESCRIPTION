@@ -6,5 +6,9 @@ Date: 2015-05-02
 Author: Fernando Cagua
 Maintainer: Fernando Cagua <fernando@cagua.co>
 Description: More about what it does (maybe more than one line)
+Depends: R (>= 3.1.0)
+Imports:
+    dplyr,
+    readr
 License: GNU 2.0
 Suggests: testthat
