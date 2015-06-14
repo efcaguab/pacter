@@ -9,6 +9,7 @@ Description: More about what it does (maybe more than one line)
 Depends: R (>= 3.1.0)
 Imports:
     dplyr,
-    readr
+    readr,
+    ttutils
 License: GNU 2.0
 Suggests: testthat
