@@ -16,7 +16,8 @@ ssm_grid <- function(acoustic_array,
             is.null(cell_width) | is.numeric(cell_width),
             is.numeric(n_cells))
   
-  if(n_cells > 10000) warning("High number of cells, computation might bee big for RAM memory")
+  if(n_cells > 10000) 
+    warning("High number of cells, computation might bee big for RAM memory")
   
   # Variables to convert latitude and longitude to meters
   lat2m <- 111*1000
