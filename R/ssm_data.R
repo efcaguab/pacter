@@ -40,7 +40,7 @@ ssm_data <- function (detections, acoustic_array, range_test,
   
   ref_tag <- start_time  %>% 
     add(seq(0, time_at_liberty, by = delta_t)) %>%
-    approx(sentinel$ts$time, sentinel$ts$efficiency, .) %>%
+    approx(sentinel$ts$time, sentinel$ts$efficiency, ., rule = 2) %>%
     magrittr::extract("y")
   
   data <- list(P0 = range_test$param$P0,
