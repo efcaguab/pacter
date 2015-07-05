@@ -23,8 +23,6 @@ ssm_data <- function (detections, acoustic_array, range_test,
   # adjust the end time so that it's a multiple of delta_t
   time_at_liberty <- ceiling(time_at_liberty / delta_t) * delta_t
   
-  n_det <- nrow(detections)
-  
   det_arr <- acoustic_array %>%
     dplyr::mutate(n_row = 1:nrow(acoustic_array)) %>%
     dplyr::select(station, n_row) %>%
@@ -32,7 +30,10 @@ ssm_data <- function (detections, acoustic_array, range_test,
     dplyr::arrange(time) %>%
     dplyr::mutate(secs = as.numeric(difftime(time, start_time, units = "secs")),
                   approx_secs = round(secs / delta_t) * delta_t) %>%
-    tbl_df()
+    dplyr::select(n_row, approx_secs) %>%
+    dplyr::distinct() 
+  
+  n_det <- nrow(det_arr)
   
   rec_n <- det_arr$n_row
   rec_t <- det_arr$approx_secs
