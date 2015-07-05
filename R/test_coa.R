@@ -2,22 +2,22 @@
 # library(dplyr)
 # library(magrittr)
 # 
+# detections_corr %<>%
+#   filter(as.Date(date_time) == unique(as.Date(date_time))[2])
+# 
 # dete <- detections(date_time, name, data = detections_corr)
 # a_array <- detections_corr %>%
 #   select(name, latitude, longitude) %>%
 #   distinct() %$%
 #   acoustic_array(name, cbind(longitude, latitude))
 # rt <- range_test(c(1, 50, 200))
-# state_space_grid <- ssm_grid(a_array)
-# delta_t <- 240
-# sent <- distinct(detections, time) %$%
+# # state_space_grid <- pacter:::ssm_grid(a_array)
+# sent <- distinct(dete, time) %$%
 #   sentinel(time, 0.7, 60)
-# state_space_data <- ssm_data(dete, a_array, rt, sent, 240)
-
-# # center-of-activity
-# load("~/github/VPS-SSM/data/processed-data/detections_corr.RData")
-
-
+# 
+# R2admb::setup_admb()
+# a <- ssm(dete, a_array, rt, sent, delta_t = 30, verbose = TRUE, n_cells = 500)
+# 
 # # 
 # station_names <- stations$name
 # station_positions <- stations %>% dplyr::select(latitude, longitude)
