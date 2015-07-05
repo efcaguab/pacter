@@ -57,7 +57,7 @@ ssm_data <- function (detections, acoustic_array, range_test,
                rec_t = rec_t,
                ref_tag = ref_tag$y)
   
-  class(data) <- append(class(data), "ssm_data")
+  class(data) <- append("ssm_data", class(data))
   data
 }
 
