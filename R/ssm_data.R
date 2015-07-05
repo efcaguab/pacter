@@ -4,8 +4,8 @@ ssm_data <- function (detections, acoustic_array, range_test,
                       start_time = NULL, end_time = NULL){
   
   n_station <- dplyr::n_distinct(acoustic_array$station)
-  x_station <- (acoustic_array$lon - state_space_grid$lon_span[1]) * state_space_grid$lon2m
-  y_station <- (acoustic_array$lat - state_space_grid$lat_span[1]) * state_space_grid$lat2m
+  x_station <- (acoustic_array$lon - ssm_grid$lon_span[1]) * ssm_grid$lon2m
+  y_station <- (acoustic_array$lat - ssm_grid$lat_span[1]) * ssm_grid$lat2m
   
   # if no start and end time are provided use the first and last detection
   if (is.null(start_time)){
