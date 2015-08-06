@@ -16,7 +16,8 @@
 #   sentinel(time, 0.7, 60)
 # 
 # R2admb::setup_admb()
-# a <- ssm(dete, a_array, rt, sent, delta_t = 30, verbose = TRUE, n_cells = 500)
+# a <- ssm(dete, a_array, rt, sent, delta_t = 30, verbose = TRUE, n_cells = 1000,
+#          params = list(logbx = -9, logby = -9, logitcor = 0, logsigma = 4.6))
 # 
 # # 
 # station_names <- stations$name
