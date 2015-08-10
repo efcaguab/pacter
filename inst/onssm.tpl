@@ -424,4 +424,4 @@ REPORT_SECTION
   
 TOP_OF_MAIN_SECTION
   // Allocate memory, required memory depends on grid resolution and length of data set
-  gradient_structure::set_CMPDIF_BUFFER_SIZE(6000000000); 
+  gradient_structure::set_CMPDIF_BUFFER_SIZE(1700000000); 
