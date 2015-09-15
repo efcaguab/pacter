@@ -85,9 +85,6 @@ ssm <- function(detections,
                  verbose = verbose,
                  admb_errors = admb_errors)
   }
-
-  
-  
   
   # make the temporary directory the working directory while executing
   setwd(tempdir())
@@ -101,5 +98,13 @@ ssm <- function(detections,
              admb_errors = admb_errors)
   
   # read results back into R
-  read_admb("onssm", verbose = verbose, admbOut = admbOut)
+  admb_out <- read_admb("onssm", verbose = verbose, admbOut = admbOut)
+  
+  admb_out$positions <- get_ssm_smooth(admb_out, state_space_grid)
+  admb_out$coefficients <- head(admb_out$coefficients, 6)
+  admb_out$state_space_grid <- state_space_grid
+  admb_out$state_space_data <- state_space_data
+  
+  class(admb_out) <- "ssm"
+  return(admb_out)
 }
