@@ -17,6 +17,7 @@ ssm <- function(detections,
                 start_time = NULL,
                 end_time = NULL,
                 params = list(logbx = -9, logby = -9, logitcor = 0, logsigma = 0.4),
+                neggative_info = TRUE,
                 safe=FALSE,
                 verbose=FALSE,
                 admb_errors=c("stop","warn","ignore")){
@@ -43,7 +44,8 @@ ssm <- function(detections,
                                start_time = NULL, end_time = NULL)
   write_ssm_data(state_space_data)
   
-  default_params <- identical(params, list(logbx = -9, logby = -9, logitcor = 0, logsigma = 0.4))
+  default_params <- identical(params, 
+                              list(logbx = -9, logby = -9, logitcor = 0, logsigma = 0.4)) & neggative_info
   
   if (default_params){
     
@@ -71,6 +73,12 @@ ssm <- function(detections,
     logby <- paste("  logby = ", params$logby, ";", sep ="")
     logitcor <- paste("  logitcor = ", params$logitcor, ";", sep ="")
     logsigma <- paste("  logsigma = ", params$logsigma, ";", sep ="")
+    if (neggative_info){
+      ni <- "  !!           lik(t,i,j) *= (1.0 - cov(t)*demap);"
+    } else {
+      ni <- "  !!           //lik(t,i,j) *= (1.0 - cov(t)*demap);"
+    }
+    the_tpl[315] <- ni
     the_tpl[352] <- logbx
     the_tpl[353] <- logby
     the_tpl[354] <- logitcor
