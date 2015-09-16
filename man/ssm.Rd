@@ -7,8 +7,9 @@
 ssm(detections, acoustic_array, range_test, sentinel, delta_t,
   lon_grid = list(from = NA, to = NA, extra = 0.2), lat_grid = list(from =
   NA, to = NA, extra = 0.2), cell_width = NULL, n_cells = 2500,
-  start_time = NULL, end_time = NULL, safe = FALSE, verbose = FALSE,
-  admb_errors = c("stop", "warn", "ignore"))
+  start_time = NULL, end_time = NULL, params = list(logbx = -9, logby =
+  -9, logitcor = 0, logsigma = 0.4), neggative_info = TRUE, safe = FALSE,
+  verbose = FALSE, admb_errors = c("stop", "warn", "ignore"))
 }
 \value{
 jj
