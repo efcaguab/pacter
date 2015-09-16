@@ -63,7 +63,8 @@ plotssm <- function(ssm_results, animation = F){
     
   }
   
-  reservoir <- qmap (location = c (lon = 1.820509, lat = 45.564856),
+  require(ggplot2)
+  reservoir <- ggmap::qmap (location = c (lon = 1.820509, lat = 45.564856),
                      zoom = 14, color = "bw", legend = "topleft")
   
   plot <- reservoir +
