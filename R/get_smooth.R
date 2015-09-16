@@ -3,10 +3,9 @@
 #' @param ssm_results 
 #' @param state_space_grid 
 #'
-#' @return
+#' @return jj
 #' @export
 #'
-#' @examples
 get_ssm_smooth <- function(ssm_results, state_space_grid){
   
   smoodat <- tail(ssm_results$coefficients, -6)

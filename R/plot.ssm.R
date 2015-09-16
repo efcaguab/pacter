@@ -2,10 +2,7 @@
 #'
 #' @param ssm_results 
 #'
-#' @return
 #'
-#' @examples
-#' @export
 plotssm <- function(ssm_results, animation = F){
   
   ngx <- ssm_results$state_space_grid$ngx
